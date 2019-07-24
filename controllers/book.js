@@ -4,6 +4,64 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+module.exports.getIndexBook = (req, res) => {
+    jwt.verify(req.token, process.env.SECRETKEY, (error, authData) => {
+        if(error) {
+            res.sendStatus(403);
+        } else {
+            res.json({
+                message: 'OK',
+                authData: authData
+            })
+        }
+    })
+}
+
+//Lihat semua data buku, dimana hanya roles = user yang bisa mengakses
+module.exports.getAllBook = (req, res) => {
+    jwt.verify(req.token, process.env.SECRETKEY, (error, authData) => {
+        if(authData['roles']  == "user") {
+            Book
+                .findAll({
+                    // attributes : ['id', 'kode', 'kategori', 'judul', 'pengarang', 'penerbit', 'tahun_terbit', 'deskripsi', 'stok', 'harga', 'berat']
+                })
+                .then((book) => {
+                    res.json(book);
+                })
+                .catch((error) => {
+                    console.log("Data gagal di load");
+                })
+        } else {
+            res.sendStatus(403);
+        }
+    })
+
+}
+
+//Lihat buku berdasarkan id, dimana hanya roles = user yang bisa mengakses
+module.exports.detailBook = (req, res) => {
+    jwt.verify(req.token, process.env.SECRETKEY, (error, authData) => {
+        if(authData['roles']  == "user") {
+            Book
+                .findOne({
+                    where : {
+                        id : req.params.id
+                    }
+                })
+                .then((book) => {
+                    res.json(book);
+                })
+                .catch((error) => {
+                    console.log("Data gagal di load");
+                })
+        } else {
+            res.sendStatus(403);
+            console.log("Akses ditolak")
+        }
+    })
+
+}
+
 //Buat buku, dimana hanya roles = admin yang bisa mengakses
 module.exports.createBook = (req, res) => {
     jwt.verify(req.token, process.env.SECRETKEY, (error, authData) => {
