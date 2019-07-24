@@ -7,13 +7,15 @@ app.use(bodyParser.json());
 
 const homeRouter = require('./routes/home');
 const registerRouter = require('./routes/user');
-
+const bookRouter = require('./routes/book');
 
 const sequelize = require('./configs/sequelize');
+const Book = require('./models/book');
 const User = require('./models/user');
 
 app.use(homeRouter);
 app.use('/user', registerRouter);
+app.use('/books', bookRouter);
 
 //Port menggunakan 3105 kelompok5 3if-01
 app.listen(3105, () => {
